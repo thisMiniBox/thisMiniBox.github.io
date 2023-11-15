@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>添加字符回调</TITLE>
+<META content="text/html; charset=gb2312" http-equiv=Content-Type>
+<META name=GENERATOR content="MSHTML 11.00.10570.1001"><LINK rel=stylesheet 
+href="_template.css"></HEAD>
+<BODY>
+<DIV id=nsbanner>
+<DIV id=bannerrow1>
+<TABLE class=bannerparthead>
+  <TBODY>
+  <TR id=hdr>
+    <TD class=runninghead noWrap>Oned2d开发文档</TD></TR></TBODY></TABLE></DIV>
+<DIV id=titlerow>
+<H1 class=dtH1>添加字符回调</H1></DIV></DIV>
+<DIV id=nstext><BR>
+<P><STRONG><FONT color=#800080 size=6>介绍添加字符回调</FONT></STRONG></P>
+<P><FONT color=#808080 size=3>从这里开始就要根据用户输入做出反馈了，在项目做大之后会使用到多个回调，</FONT></P>
+<P><FONT color=#808080 size=3>不可能把所有数据都作为全局变量，所以应该把数据抽象为结构体或类，</FONT></P>
+<P><FONT color=#808080 size=3>把你的数据指针与窗口关联，写出好看又便于管理的代码</FONT></P>
+<P><FONT color=#808080 size=3></FONT>&nbsp;</P>
+<P><FONT color=#808080 size=3>首先定义相关的数据类</FONT></P>
+<P><FONT color=#000000 size=3><FONT 
+color=#008000>//因为目标是做一个贪吃蛇，所以用这个名字<BR></FONT>class <FONT 
+color=#808000>GreedySnake<BR></FONT>{<BR><FONT 
+color=#008000>&nbsp;//直接把矩形的旋转的数据搬进来<BR></FONT>&nbsp;<FONT 
+color=#808000>float</FONT> angle;<BR><FONT color=#808080><FONT 
+color=#808000>&nbsp;float</FONT> </FONT>lineSize;</FONT><FONT color=#000000 
+size=3><BR>};</FONT></P>
+<P><FONT size=3></FONT>&nbsp;</P>
+<P><FONT color=#808080 size=3>设置类的初始化函数</FONT></P><FONT color=#c0c0c0 
+size=3>class </FONT><FONT color=#c0c0c0 size=3>GreedySnake<BR>{<BR></FONT><FONT 
+color=#c0c0c0><FONT size=3>&nbsp;//直接把矩形的旋转的数据搬进来<BR>&nbsp;float 
+angle;<BR>&nbsp;float lineSize;</FONT><BR></FONT>
+<P><FONT color=#000000 size=3>public:<BR><FONT 
+color=#008000>&nbsp;//初始化变量</FONT><BR>&nbsp;GreedySnake() :angle(0), 
+lineSize(200)<BR>&nbsp;{}</FONT></P>
+<P><FONT color=#c0c0c0 size=3>}；</FONT></P>
+<P>&nbsp;</P>
+<P><FONT color=#808080 size=3>设置绘图函数</FONT></P>
+<P><FONT color=#808080 size=3></FONT>&nbsp;</P>
+<P><FONT color=#c0c0c0 size=3>&nbsp;//直接把矩形的旋转的数据搬进来<BR>&nbsp;float 
+angle;<BR>&nbsp;float lineSize;<BR><FONT color=#000000><FONT 
+color=#008000>&nbsp;//绘图函数，因为函数是外调用的，与类无关，必须为静态函数<BR>&nbsp;//（放在类中是因为这个函数是此类独有的绘制过程，避免污染命名空间）</FONT><BR>&nbsp;static 
+void DrawWind(MainWind_D2D* wind)<BR>&nbsp;{<BR><FONT 
+color=#008000>&nbsp;&nbsp;//取出用户数据重新转换为指针（要先把类的指针作为数据放入窗口用户数据区）<A 
+href="page_48.html">page_48.html</A></FONT><BR>&nbsp;&nbsp;GreedySnake* data = 
+(GreedySnake*)wind-&gt;GetUserData();<BR><FONT 
+color=#008000>&nbsp;&nbsp;//错误检测</FONT><BR>&nbsp;&nbsp;if 
+(!data)<BR>&nbsp;&nbsp;&nbsp;return;</FONT></FONT></P>
+<P><FONT color=#000000 size=3><FONT 
+color=#c0c0c0>&nbsp;&nbsp;//清空背景为淡黄色<BR>&nbsp;&nbsp;wind-&gt;ClearWindBackground(RGB(200, 
+200, 100));<BR>&nbsp;&nbsp;//获取当前窗口大小<BR>&nbsp;&nbsp;SIZE windSize = 
+wind-&gt;GetWindSize();<BR>&nbsp;&nbsp;//计算旋转的中点位置<BR>&nbsp;&nbsp;POINT midpoint 
+= { windSize.cx / 2,windSize.cy / 2 };<BR></FONT><FONT color=#c0c0c0><FONT 
+color=#000000><FONT 
+color=#008000>&nbsp;&nbsp;//线的长度和旋转角度直接获取类的值</FONT><BR>&nbsp;&nbsp;float 
+lineSize = data-&gt;lineSize;<BR>&nbsp;&nbsp;float angle = 
+data-&gt;angle;</FONT><BR>&nbsp;&nbsp;constexpr float PI = 
+3.1415925;<BR>&nbsp;&nbsp;//计算向量a1<BR>&nbsp;&nbsp;POINT a1 = { std::cos(angle) * 
+lineSize,std::sin(angle) * lineSize };<BR>&nbsp;&nbsp;POINT a2 = { 
+std::cos(angle + PI / 2) * lineSize,std::sin(angle + PI / 2) * lineSize 
+};<BR>&nbsp;&nbsp;//计算第二个点的位置<BR>&nbsp;&nbsp;POINT point2 = PointAdd(midpoint, 
+a1);<BR>&nbsp;&nbsp;//绘制线条（不使用DrawRectangle是因为直接绘制的矩形不能旋转，只有矩形元素才可以）<BR>&nbsp;&nbsp;wind-&gt;DrawLine(midpoint.x, 
+midpoint.y, point2.x, point2.y);<BR>&nbsp;&nbsp;point2 = PointAdd(midpoint, 
+a2);<BR>&nbsp;&nbsp;wind-&gt;DrawLine(midpoint.x, midpoint.y, point2.x, 
+point2.y);<BR>&nbsp;&nbsp;midpoint = PointAdd(point2, 
+a1);<BR>&nbsp;&nbsp;wind-&gt;DrawLine(midpoint.x, midpoint.y, point2.x, 
+point2.y);<BR>&nbsp;&nbsp;point2 = PointAdd(midpoint, { -a2.x,-a2.y 
+});<BR>&nbsp;&nbsp;wind-&gt;DrawLine(midpoint.x, midpoint.y, point2.x, 
+point2.y);</FONT><BR>&nbsp;}</FONT></P>
+<P><FONT color=#c0c0c0 size=3>public:<BR>&nbsp;//初始化变量</FONT></P>
+<P>&nbsp;</P>
+<P><FONT color=#808080 size=3>制作字符回调</FONT></P>
+<P><FONT size=3><FONT color=#008000>&nbsp;//设置字符回调，用于检测输入，我们这里只检测空格输入，作为旋转指令<A 
+href="介绍-枚举-按键状态-.html">介绍-枚举-按键状态-.html</A></FONT><BR>&nbsp;static void 
+CharCallback(MainWind_D2D* wind, int key, int Frequency, KeyMode 
+mode)<BR>&nbsp;{<BR><FONT 
+color=#008000>&nbsp;&nbsp;//如果不是期望的数据类型直接返回</FONT><BR>&nbsp;&nbsp;if (mode != 
+KM_CHAR)<BR>&nbsp;&nbsp;&nbsp;return;<BR><FONT 
+color=#008000>&nbsp;&nbsp;//同样的取出用户数据重新转换为指针</FONT><BR>&nbsp;&nbsp;GreedySnake* 
+data = (GreedySnake*)wind-&gt;GetUserData();<BR><FONT 
+color=#008000>&nbsp;&nbsp;//错误检测<BR></FONT>&nbsp;&nbsp;if 
+(!data)<BR>&nbsp;&nbsp;&nbsp;return;<BR>&nbsp;&nbsp;if (key == L' 
+')<BR>&nbsp;&nbsp;&nbsp;data-&gt;angle += 0.1;<BR>&nbsp;}</FONT></P>
+<P>&nbsp;</P>
+<P><FONT color=#808080 size=3>制作绑定函数，将类与窗口绑定</FONT></P>
+<P><FONT color=#000000 size=3><FONT 
+color=#008000>&nbsp;//将类与窗口绑定（把回调和自身指针放到窗口）<BR></FONT>&nbsp;void 
+Bind(MainWind_D2D* wind)<BR>&nbsp;{<BR><FONT 
+color=#008000>&nbsp;&nbsp;//在64位计算机中，指针就是64位的整数，直接把自指针强转放入窗口用户数据</FONT><BR>&nbsp;&nbsp;wind-&gt;SetUserData((long 
+long)this);<BR><FONT 
+color=#008000>&nbsp;&nbsp;//把类中的绘制函数放入窗口</FONT><BR>&nbsp;&nbsp;wind-&gt;SetPaintCallback(DrawWind);<BR><FONT 
+color=#008000>&nbsp;&nbsp;//把类中的字符回调放入窗口</FONT><BR>&nbsp;&nbsp;wind-&gt;SetKeyCallback(CharCallback);<BR>&nbsp;}</FONT></P>
+<P><FONT size=3></FONT>&nbsp;</P>
+<P><FONT color=#808080 size=3>最后修改main函数</FONT></P>
+<P><FONT color=#c0c0c0 size=3>int 
+main()<BR>{<BR>&nbsp;//自动初始化设备，只需要声明一个变量就可以了（如果不声明图片无法正常加载）<BR>&nbsp;Game::AutoInit 
+autoInit;<BR>&nbsp;//这个变量就是D2D窗口，之后的所有此库相关的窗口操作都要用到他<BR>&nbsp;Game::MainWind_D2D 
+d2dWind;</FONT></P>
+<P><FONT color=#008000 size=3>&nbsp;//声明数据</FONT></P>
+<P><FONT size=3>&nbsp;GreedySnake data;<BR>&nbsp;<FONT 
+color=#c0c0c0>//创建窗口<BR>&nbsp;d2dWind.CreateWind();<BR>&nbsp;//设置窗口标题<BR>&nbsp;d2dWind.SetText(L"贪吃蛇");</FONT><BR><FONT 
+color=#008000>&nbsp;//在开始消息循环前绑定窗口重绘函数</FONT><BR>&nbsp;data.Bind(&amp;d2dWind);<BR><FONT 
+color=#c0c0c0>&nbsp;//开始运行<BR>&nbsp;d2dWind.StaticWindowMessageLoop();<BR>&nbsp;return 
+0;<BR>}</FONT></FONT></P>
+<P><FONT color=#c0c0c0 size=3></FONT>&nbsp;</P>
+<P><FONT color=#ff00ff size=3>编译后应该就能获得一个按下空格就会旋转的矩形</FONT></P>
+<P><IMG src="设置绘图-转圈圈.png"></P>
+<P><FONT size=3></FONT>
+<HR>
+
+<P></P></DIV>
+<DIV class=footer>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copyright &copy; 2023 <A 
+href="https://www.chmeditor.com" target=_blank>My Company</A>. All Rights 
+Reserved. </P></DIV></BODY></HTML>
