@@ -1,0 +1,12 @@
+[book]
+title = "OneKeyD2D开发文档"
+author = "折纸的小箱子"
+description = "OneKeyD2D是开源的"
+language = "zh"
+
+[rust]
+edition = "2018"
+
+[build]
+build-dir = "output_book"
+create-missing = false
