@@ -437,8 +437,10 @@ int main()
 和<a href="%E6%95%99%E7%A8%8B/../CallBack/D2D_PaintCallback.html">函数指针类型</a><br />
 <strong>gdi窗口</strong>:
 <a href="%E6%95%99%E7%A8%8B/../MainWind%E6%96%87%E4%BB%B6/GDIWindFun/SetPaintCallback().html">设置回调函数</a>
-和<a href="%E6%95%99%E7%A8%8B/../CallBack/GDI_PaintCallback.html">函数指针类型</a>
-&gt;这里以d2d窗口为例</p>
+和<a href="%E6%95%99%E7%A8%8B/../CallBack/GDI_PaintCallback.html">函数指针类型</a></p>
+<blockquote>
+<p>这里以d2d窗口为例</p>
+</blockquote>
 <blockquote>
 <p>简单图形绘制d2d窗口与gdi窗口通用</p>
 </blockquote>
@@ -802,6 +804,15 @@ int main()
 <div style="break-before: page; page-break-before: always;"></div><h1 id="窗口元素绘图"><a class="header" href="#窗口元素绘图">窗口元素绘图</a></h1>
 <p>介绍完普通绘图后，如果那这些进行绘图就会发现有很多不方便的地方，绘制一个图形会使用大量的代码，当图形稍微多一点就会很乱，不够整洁优雅，而且功能残缺。<br />
 使用元素法绘图可以把每个图形单独抽象为一个元素，方便管理。</p>
+<h2 id="内容-3"><a class="header" href="#内容-3">内容</a></h2>
+<ul>
+<li><a href="%E6%95%99%E7%A8%8B/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0.html#%E5%88%A9%E7%94%A8d2dpicture%E7%BB%98%E5%88%B6%E4%B8%80%E5%BC%A0%E5%9B%BE%E7%89%87">简单绘制示例</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0.html#%E5%88%A9%E7%94%A8d2dpicture%E7%BB%98%E5%88%B6%E4%B8%80%E5%BC%A0%E5%9B%BE%E7%89%87">图片</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0.html#d2dtext">文本</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0.html#d2dfoldline">折线</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0.html#d2drectangle">矩形</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0.html#d2delliptic">椭圆</a></li>
+</ul>
 <h2 id="利用d2dpicture绘制一张图片"><a class="header" href="#利用d2dpicture绘制一张图片">利用[d2dPicture]绘制一张图片</a></h2>
 <p>首先在主函数中定义一个[AutoInit]变量来初始化位图设备</p>
 <pre><code class="language-cpp">AutoInit autoInit;
@@ -894,7 +905,105 @@ text.SetShowText(L&quot;d2dText使用示例&quot;);
 </code></pre>
 <p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0/text.png" alt="text" /></p>
 <h3 id="d2dfoldline"><a class="header" href="#d2dfoldline">d2dFoldLine</a></h3>
-<p>折线的绘制</p>
+<p>折线的绘制<br />
+这里以绘制一个sin图象为例</p>
+<p>一样的，先设置颜色</p>
+<pre><code class="language-cpp">Lines.SetColor(D2D1::ColorF(1, 0, 0), window-&gt;GetD2DTargetP());
+</code></pre>
+<p>定义连续的点数组</p>
+<pre><code class="language-cpp">std::vector&lt;D2D1_POINT_2F&gt; points(30);
+const float step = (float)(windowSize.cx - 100) / points.size();
+const float start = 50;
+const float amplitude = 100;
+const float cycle = 3;
+for (int i = 0; i &lt; points.size(); ++i)
+{
+    points[i] = D2D1::Point2F(
+        start + step * i, 
+        amplitude * std::sin(i * 3.14159 * 2 * cycle / points.size()));
+}
+//设置绘制位置
+Lines.SetPosition(0, windowSize.cy * 0.5);
+</code></pre>
+<p>然后将点赋值给折线元素</p>
+<pre><code class="language-cpp">Lines.SetFoldLine(points);
+</code></pre>
+<p>这样就能正确的绘制一个类sin曲线了</p>
+<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0/%E6%8A%98%E7%BA%BF.png" alt="曲线" /></p>
+<p>更多的样式的绘制<br />
+可以使用与简单绘图类似的函数<a href="%E6%95%99%E7%A8%8B/../MainWind%E6%96%87%E4%BB%B6/MainWindFunction/SetPen().html">SetPen</a>,<br />
+不过这里的SetPen需要将窗口作为第一个参数</p>
+<pre><code class="language-cpp">Lines.SetPen(window,D2D1::ColorF(1,0,1),PenStyle::DashDotDot);
+</code></pre>
+<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0/%E6%8A%98%E7%BA%BF-%E7%94%BB%E7%AC%94.png" alt="画笔" /></p>
+<p>也可以使用<a href="%E6%95%99%E7%A8%8B/../MainWind%E6%96%87%E4%BB%B6/D2DWindFun/SetPenStyle().html">SetPenStyle</a>来自定义曲线，同样不同的是，第一个参数需要为窗口或d2d工厂</p>
+<p>比如这里绘制先点后线的渐变曲线</p>
+<pre><code class="language-cpp">Lines.SetPenStyle(
+    window,
+    D2D1::StrokeStyleProperties(
+        D2D1_CAP_STYLE_FLAT,
+        D2D1_CAP_STYLE_FLAT,
+        D2D1_CAP_STYLE_ROUND,
+        D2D1_LINE_JOIN_MITER,
+        10.0f,
+        D2D1_DASH_STYLE_CUSTOM,
+        0.0f),
+	{1,6,6,7,9,8,12,27,18,30});
+</code></pre>
+<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0/%E6%8A%98%E7%BA%BF-%E6%A0%B7%E5%BC%8F.png" alt="样式" /></p>
+<h2 id="d2drectangle"><a class="header" href="#d2drectangle">d2dRectangle</a></h2>
+<p>矩形元素，支持绘制圆角矩形以及旋转绘制<br />
+都是一样的步骤，设置颜色，设置大小，设置位置(由于位置是跟随鼠标的，没有单独设置)</p>
+<pre><code class="language-cpp">rectangle.SetColor(D2D1::ColorF(0.7, 0.7, 0), window-&gt;GetD2DTargetP());
+rectangle.SetShowWide(200, 100);
+</code></pre>
+<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0/%E7%9F%A9%E5%BD%A2-%E6%9C%AA%E5%A1%AB%E5%85%85.png" alt="矩形" /></p>
+<p>然后尝试设置为填充模式绘制并设置圆角</p>
+<pre><code class="language-cpp">//启用圆角
+rectangle.Round(true);
+//设置x方向与y方向的圆角弧度
+rectangle.SetRound(30, 15);
+</code></pre>
+<p>现在就是一个填充了颜色的并且带有圆角的矩形了</p>
+<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0/%E7%9F%A9%E5%BD%A2-%E5%A1%AB%E5%85%85%E5%9C%86%E8%A7%92.png" alt="填充圆角" /></p>
+<p>你可能会发现简单绘制能设置填充色与边框色，这个似乎没有说，这是因为简单绘制是由边框与填充两个矩形构成的，所以如果需要绘制边框，可以使用两个窗口元素</p>
+<p>矩形元素还支持旋转</p>
+<pre><code class="language-cpp">//设置旋转角度与旋转中心
+rectangle.SetRotate(90, D2D1::Point2F(0.5,0.5));
+//旋转中心以矩形大小为基准的百分比坐标
+//比如（0，0）表示矩形左上角，（0.5，0）表示矩形的顶部边形的中点
+</code></pre>
+<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0/%E7%9F%A9%E5%BD%A2-%E6%97%8B%E8%BD%AC.png" alt="旋转矩形" /></p>
+<h2 id="d2delliptic"><a class="header" href="#d2delliptic">d2dElliptic</a></h2>
+<p>仍然是相同的步骤，先设置颜色，再设置椭圆信息</p>
+<pre><code class="language-cpp">//设置颜色
+elliptic.SetColor(D2D1::ColorF(0.7, 0.1, 0), window-&gt;GetD2DTargetP());
+//设置x轴与y轴
+elliptic.SetRadius(200, 100);
+//设置中点位置
+elliptic.SetEllipticalPosition(500, 300);
+</code></pre>
+<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0/%E6%A4%AD%E5%9C%86.png" alt="椭圆" /></p>
+<p>依旧可以设置填充模式，这里不放图片了</p>
+<h2 id="d2dpicture"><a class="header" href="#d2dpicture">d2dPicture</a></h2>
+<p>图片元素，这个在控件与场景中被作为了资源使用</p>
+<p>图片的绘制首先需要加载图片资源，可以从内存加载或从文件加载</p>
+<p>从文件加载<br />
+[LoadPictureFromFile]<br />
+从内存加载位图数据，数据由像素点组成<br />
+[LoadBitmapFromMemory]<br />
+从内存加载png，jpg等<br />
+[LoadImageFromMemory]</p>
+<p>设置显示的切片<br />
+[SetCrop]<br />
+比如裁取一半</p>
+<pre><code class="language-cpp">picture.LoadPictureFromFile(L&quot;图片.png&quot;, window);
+auto pictureSize = picture.GetImageSize();
+picture.SetCrop(D2D1::RectF(0, 0, pictureSize.width * 0.5, pictureSize.height * 0.5));
+</code></pre>
+<p>图片的显示大小是使用[SetShowWide]设置的</p>
+<p>原图|裁取后</p>
+<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0/%E5%9B%BE%E7%89%87.png" alt="原图" /><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0/%E8%A3%81%E5%89%AA.png" alt="裁剪" /></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="onekeyd2dhpp"><a class="header" href="#onekeyd2dhpp">OneKeyD2D.hpp</a></h1>
 <p>这个文件是为了简化头文件引用设计的<br />
 他会按照正确的顺序引用头文件，避免不必要的错误<br />
@@ -913,7 +1022,7 @@ text.SetShowText(L&quot;d2dText使用示例&quot;);
 <p><a href="OneKeyD2D%E6%96%87%E4%BB%B6/../Start.html">返回起始页</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="mainwindhpp"><a class="header" href="#mainwindhpp">MainWind.hpp</a></h1>
 <p>基础库，封装了窗口的创建以及基础绘制</p>
-<h2 id="内容-3"><a class="header" href="#内容-3">内容</a></h2>
+<h2 id="内容-4"><a class="header" href="#内容-4">内容</a></h2>
 <ul>
 <li><a href="MainWind%E6%96%87%E4%BB%B6/./d2dClickDetectionClass.html">d2dClickDetection</a><br />
 窗口的点击检测器，用于制作按钮</li>
