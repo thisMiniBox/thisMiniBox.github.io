@@ -191,6 +191,7 @@
 <li><a href="./%E6%95%99%E7%A8%8B/%E7%AA%97%E5%8F%A3%E5%85%83%E7%B4%A0.html">利用窗口元素绘图</a></li>
 <li><a href="./%E6%95%99%E7%A8%8B/%E7%AA%97%E5%8F%A3%E6%8E%A7%E4%BB%B6.html">窗口控件的使用</a></li>
 <li><a href="./%E6%95%99%E7%A8%8B/%E5%88%A9%E7%94%A8%E5%9C%BA%E6%99%AF%E7%BB%98%E5%9B%BE.html">利用场景绘图</a></li>
+<li>[场景对象的介绍]</li>
 <li>[自定义场景对象]</li>
 <li>[瓦片地图]</li>
 </ul>
@@ -1233,6 +1234,16 @@ std::vector&lt;WindElements::d2dPicture*&gt;&amp; data<br />
 <p>离开场景时调用<br />
 <strong>End()</strong></p>
 <p>让你的编程体验如Unity一般便捷</p>
+<h2 id="内容-5"><a class="header" href="#内容-5">内容</a></h2>
+<ul>
+<li><a href="%E6%95%99%E7%A8%8B/%E5%88%A9%E7%94%A8%E5%9C%BA%E6%99%AF%E7%BB%98%E5%9B%BE.html#%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AA%E5%9C%BA%E6%99%AF">定义场景</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E5%88%A9%E7%94%A8%E5%9C%BA%E6%99%AF%E7%BB%98%E5%9B%BE.html#%E6%B7%BB%E5%8A%A0%E5%9C%BA%E6%99%AF%E5%AF%B9%E8%B1%A1">添加场景对象</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E5%88%A9%E7%94%A8%E5%9C%BA%E6%99%AF%E7%BB%98%E5%9B%BE.html#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%9C%BA%E6%99%AF%E5%AF%B9%E8%B1%A1">初始化场景对象</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E5%88%A9%E7%94%A8%E5%9C%BA%E6%99%AF%E7%BB%98%E5%9B%BE.html#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E7%AE%A1%E7%90%86%E5%99%A8">使用场景管理器</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E5%88%A9%E7%94%A8%E5%9C%BA%E6%99%AF%E7%BB%98%E5%9B%BE.html#%E4%BD%BF%E7%94%A8update%E4%BB%A3%E6%9B%BF%E9%83%A8%E5%88%86%E9%94%AE%E9%BC%A0%E5%9B%9E%E8%B0%83">重载Update函数进行操控</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E5%88%A9%E7%94%A8%E5%9C%BA%E6%99%AF%E7%BB%98%E5%9B%BE.html#%E5%88%9B%E5%BB%BA%E7%AC%AC%E4%BA%8C%E5%9C%BA%E6%99%AF%E5%B9%B6%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%9B%9E%E8%B0%83">设置多场景并利用场景回调</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/%E5%88%A9%E7%94%A8%E5%9C%BA%E6%99%AF%E7%BB%98%E5%9B%BE.html#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81">完整代码</a></li>
+</ul>
 <h2 id="定义一个场景"><a class="header" href="#定义一个场景">定义一个场景</a></h2>
 <p>使用继承的方式定义场景类</p>
 <p>每个场景类都允许单独设置用户数据，也允许定义场景的消息回调，但是窗口的用户数据会被占用，窗口的用户数据会被改为Room指针，如果进行修改，会导致未知错误</p>
@@ -1356,9 +1367,322 @@ ButtonUI m_Button;
 }
 </code></pre>
 <p>现在就能正确绘制了，并且ui会随着窗口大小的改变自动调整</p>
-<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E6%8E%A7%E4%BB%B6/%E5%9C%BA%E6%99%AF1%E5%88%9B%E5%BB%BA.png" alt="创建场景" /></p>
+<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E5%9C%BA%E6%99%AF/%E5%9C%BA%E6%99%AF1%E5%88%9B%E5%BB%BA.png" alt="创建场景" /></p>
 <h2 id="使用update代替部分键鼠回调"><a class="header" href="#使用update代替部分键鼠回调">使用Update代替部分键鼠回调</a></h2>
-<p>//2023/11/28</p>
+<p>使用Update就要在类中重载虚函数</p>
+<pre><code class="language-cpp">//重载基类虚函数Update
+void Update(float IntervalTime)override
+{
+
+}
+</code></pre>
+<p>然后在每一帧都检测按键情况，<br />
+使用<a href="https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-getkeystate">GetKeyState</a>函数检测按键状态，参数为<a href="https://learn.microsoft.com/zh-cn/windows/win32/inputdev/virtual-key-codes">虚拟键键码</a><br />
+比如实现当按下空格时按钮会发生抖动1秒</p>
+<pre><code class="language-cpp">//设置抖动的时间为1秒
+const float timingJitter = 1000.f;
+//用于检测当前抖动运行时间
+static float RunTime = 0;
+
+//检测是否按下空格，如果按下则返回值小于0
+if (GetKeyState(VK_SPACE) &lt; 0)
+{
+    //设置运行时间为0，表示开始抖动
+    RunTime = 0;
+}		
+//如果运行时间小于抖动时间，表示要继续抖动
+if (RunTime &lt; timingJitter)
+{
+    //加上运行时间
+    RunTime += IntervalTime;
+
+    //SetShowPositionForUI是跟随窗口大小调整设置的，
+    //所以不会立即显示，因此要使用SetShowPosition
+
+    //在激活的场景中可以通过调用基类函数GetRoomManage来获取
+    //场景管理器，然后通过场景管理器获得当前窗口,进而读取窗口大小
+    auto WindowSize = GetRoomManage()-&gt;GetCurrentWindow()-&gt;GetWindSize();
+    //计算在当前时间抖动后的位置
+    auto NewPos = Vector::Vec2(
+        WindowSize.cx * 0.4, 
+        WindowSize.cy * 0.5 + std::sin(RunTime) * 30);
+    m_Button.SetShowPosition(NewPos.x, NewPos.y);
+    //抖动动画结束后回到原位
+    if (RunTime &gt;= timingJitter)
+    {
+        m_Button.SetShowPosition(WindowSize.cx * 0.4, WindowSize.cy * 0.5);
+    }
+    
+}
+</code></pre>
+<p><img src="%E6%95%99%E7%A8%8B/./%E5%9B%BE%E7%89%87/%E5%9C%BA%E6%99%AF/%E5%9C%BA%E6%99%AF-%E6%8A%96%E5%8A%A8.gif" alt="抖动动画" /></p>
+<h2 id="创建第二场景并使用场景回调"><a class="header" href="#创建第二场景并使用场景回调">创建第二场景，并使用场景回调</a></h2>
+<p>现在场景第二个场景，这个场景的控制使用场景回调</p>
+<ul>
+<li><a href="%E6%95%99%E7%A8%8B/../CallBack/Room_KeyInputCallback.html">按键回调</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/../CallBack/Room_MouseCallback.html">鼠标回调</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/../CallBack/Room_SizeCallback.html">窗口大小调整回调</a></li>
+<li><a href="%E6%95%99%E7%A8%8B/../CallBack/Room_PaintCallback.html">额外绘图回调</a><em><strong>(非必要不推荐使用，此绘图在所有场景对象绘制完成后调用)</strong></em></li>
+</ul>
+<p>仍然先重载Room</p>
+<pre><code class="language-cpp">class SecondRoom :public Game::Room
+{
+	//背景
+	ImageUIPack m_Background;
+public:
+	//初始化
+	SecondRoom(MainWind_D2D* window)
+	{
+		//加载背景图片，（此图片由ai生成做演示）
+		m_Background.m_Data.LoadPictureFromFile(L&quot;背景2.png&quot;, window);
+		//设置显示大小
+		m_Background.SetShowWideForUI(1, 1);
+		//添加到场景
+		AddObject(m_Background);
+	}
+};
+</code></pre>
+<p>然后记得添加到窗口管理器</p>
+<pre><code class="language-cpp">SecondRoom room2(&amp;Window);
+roomManage.AddRoom(room2, 2);
+</code></pre>
+<p>设置跳转到场景2，就可以看见不同了</p>
+<pre><code class="language-cpp">roomManage.GotoRoom(2);
+</code></pre>
+<p>直到这里我们都是使用在消息回调之前设置跳转的场景<br />
+在程序运行过程中怎么实现跳转呢</p>
+<p>我们需要使用Room中的基类函数GetRoomManage
+来获取当前场景绑定的场景管理器（上面设置抖动已经使用了一次）</p>
+<p>这里实现一个点击ESC返回键从场景2切换回场景1，<br />
+这里就不使用Update来检测了，
+使用按键回调<br />
+定义回调</p>
+<pre><code class="language-cpp">//定义按键回调
+static void KeyCallback(Room* roomP,int key,int,KeyMode mode)
+{
+	//将room从基类转换为当前类型
+	auto* room2 = roomP-&gt;ToRoom&lt;SecondRoom&gt;();
+	//确定消息为esc的字符消息
+	if (mode == KM_CHAR&amp;&amp;key==VK_ESCAPE)
+	{
+		//跳转到场景1，基类中的GoToRoom函数是不能使用的，
+		//他是给场景管理器调用用于初始化的，
+		//切换场景使用场景管理器的GoToRoom
+		room2-&gt;GetRoomManage()-&gt;GotoRoom(1);
+	}
+}
+</code></pre>
+<p>定义后使用基类函数<br />
+SetRoomKeyCallback设置场景按键回调</p>
+<pre><code class="language-cpp">//设置按键回调
+SetRoomKeyCallback(KeyCallback);
+</code></pre>
+<p>现在就能通过点击ESC按键返回场景1了，<br />
+但是场景1还不能到场景2，<br />
+现在去完成场景1的按键回调</p>
+<p><strong>现在换回第一个场景</strong></p>
+<p>定义场景切换按键的按键回调</p>
+<pre><code class="language-cpp">//设置按键回调
+static void GoToRoom2(MainWind* window,long long roomP)
+{
+    auto* room = (FirstRoom*)roomP;
+    //跳转到场景2
+    room-&gt;GetRoomManage()-&gt;GotoRoom(2);
+}
+</code></pre>
+<p>修改之前的代码，将回调加入</p>
+<pre><code class="language-cpp">//初始化按钮
+m_Button.Init(
+    window,//用于传递d2d设备的窗口
+    L&quot;切换场景&quot;,//按钮显示的文本
+    GoToRoom2,//刚才定义的按钮回调
+    D2D1::ColorF(D2D1::ColorF::Purple),//设置文本颜色为紫色
+    D2D1::ColorF(D2D1::ColorF::YellowGreen),//设置背景颜色为黄绿色
+    this//将场景指针作为参数传递
+);
+</code></pre>
+<p>现在就能正常在两个场景之间相互切换了</p>
+<h2 id="完整代码-2"><a class="header" href="#完整代码-2">完整代码</a></h2>
+<h3 id="maincpp"><a class="header" href="#maincpp">Main.cpp</a></h3>
+<pre><code class="language-cpp">#include&lt;OneKeyD2D/OneKeyD2D.hpp&gt;
+#include&quot;FirstRoom.h&quot;
+#include&quot;SecondRoom.h&quot;
+using namespace Game;
+
+int main()
+{
+	//初始化COM设备
+	AutoInit autoInit;
+	//窗口索引标识
+	MainWind_D2D Window;
+	//场景管理器需要与窗口绑定，
+	//所以要在窗口变量后创建，
+	// 运行创建在窗口创建函数之前
+	RoomManage roomManage(Window);
+	//创建窗口
+	Window.CreateWind();
+	//设置标题
+	Window.SetText(L&quot;OneKeyD2D场景教学&quot;);
+	//由于对象初始化需要用到d2d设备，
+	//所以必须在窗口创建后创建
+	FirstRoom room1(&amp;Window);
+	SecondRoom room2(&amp;Window);
+	//将场景交由场景管理器管理，并为器分配独有的id
+	//如果id已被占用不会覆盖原场景，并返回-1
+	roomManage.AddRoom(room1, 1);
+	roomManage.AddRoom(room2, 2);
+	//跳转到指定场景id的场景
+	//如果什么都没有指定则为什么都没有的黑窗口
+	roomManage.GotoRoom(1);
+	//开启消息循环
+	Window.StaticWindowMessageLoop();
+	return 0;
+}
+</code></pre>
+<h3 id="firstroomh"><a class="header" href="#firstroomh">FirstRoom.h</a></h3>
+<pre><code class="language-cpp">#pragma once
+#include&lt;OneKeyD2D/OneKeyD2D.hpp&gt;
+using namespace Game;
+using namespace RoomObj;
+class FirstRoom:public Room
+{
+	//背景图片资源
+	WindElements::d2dPicture m_BackgroundRec;
+	//背景图片
+	ImageUI m_Background;
+	//切换场景按钮
+	ButtonUI m_Button;
+	//重载基类虚函数Update
+	void Update(float IntervalTime)override
+	{
+		//设置抖动的时间为1秒
+		const float timingJitter = 1000.f;
+		//用于检测当前抖动运行时间
+		static float RunTime = 0;
+
+		//检测是否按下空格，如果按下则返回值小于0
+		if (GetKeyState(VK_SPACE) &lt; 0)
+		{
+			//设置运行时间为0，表示开始抖动
+			RunTime = 0;
+		}		
+		//如果运行时间小于抖动时间，表示要继续抖动
+		if (RunTime &lt; timingJitter)
+		{
+			//加上运行时间
+			RunTime += IntervalTime;
+
+			//SetShowPositionForUI是跟随窗口大小调整设置的，
+			//所以不会立即显示，因此要使用SetShowPosition
+
+			//在激活的场景中可以通过调用基类函数GetRoomManage来获取
+			//场景管理器，然后通过场景管理器获得当前窗口,进而读取窗口大小
+			auto WindowSize = GetRoomManage()-&gt;GetCurrentWindow()-&gt;GetWindSize();
+			//计算在当前时间抖动后的位置
+			auto NewPos = Vector::Vec2(
+				WindowSize.cx * 0.4, 
+				WindowSize.cy * 0.5 + std::sin(RunTime) * 30);
+			m_Button.SetShowPosition(NewPos.x, NewPos.y);
+			//抖动动画结束后回到原位
+			if (RunTime &gt;= timingJitter)
+			{
+				m_Button.SetShowPosition(WindowSize.cx * 0.4, WindowSize.cy * 0.5);
+			}
+			
+		}
+	}
+	//设置按键回调
+	static void GoToRoom2(MainWind* window,long long roomP)
+	{
+		auto* room = (FirstRoom*)roomP;
+		room-&gt;GetRoomManage()-&gt;GotoRoom(2);
+	}
+
+public:
+	FirstRoom(MainWind_D2D* window)
+	{
+		//加载资源
+		m_BackgroundRec.LoadPictureFromFile(L&quot;背景.jpg&quot;, window);
+		//绑定资源到场景对象
+		m_Background.Bind(&amp;m_BackgroundRec);
+		//设置对象显示位置为相对窗口大小的0%，0%，
+		// 会更具窗口大小的调整自动调整位置
+		m_Background.SetShowPositionForUI(0, 0);
+		////也可以使用像素来设置，是固定位置
+		//m_Background.SetShowPosition(0, 0);
+
+		//设置宽度为窗口的100%，100%
+		m_Background.SetShowWideForUI(1, 1);
+		////也可以设置为固定像素大小
+		//m_Background.SetShowWide(800, 600);
+
+		//添加到场景对象列表，
+		// 默认添加位置为-1，也就是倒数第一个，
+		//添加位置表示绘制顺序
+		//如果没有添加就不会绘制
+		AddObject(m_Background);
+		//初始化按钮
+		m_Button.Init(
+			window,//用于传递d2d设备的窗口
+			L&quot;切换场景&quot;,//按钮显示的文本
+			GoToRoom2,//按钮回调，由于场景2还没有写，所以先设置为空
+			D2D1::ColorF(D2D1::ColorF::Purple),//设置文本颜色为紫色
+			D2D1::ColorF(D2D1::ColorF::YellowGreen),//设置背景颜色为黄绿色
+			this//将场景指针作为参数传递
+		);
+		//设置按钮绘制位置所在矩形
+		//这里仍然使用窗口百分比坐标
+		m_Button.SetShowRectForUI(
+			D2D1::RectF(
+				0.4, 0.5,
+				0.6, 0.6
+			)
+		);
+		//添加到对象列表，让系统管理运行状态
+		AddObject(m_Button);
+	}
+};
+
+</code></pre>
+<h3 id="secondroomh"><a class="header" href="#secondroomh">SecondRoom.h</a></h3>
+<pre><code class="language-cpp">#pragma once
+#include&lt;OneKeyD2D/OneKeyD2D.hpp&gt;
+using namespace Game;
+using namespace RoomObj;
+class SecondRoom :public Game::Room
+{
+	//背景
+	ImageUIPack m_Background;
+	//定义按键回调
+	static void KeyCallback(Room* roomP,int key,int,KeyMode mode)
+	{
+		//将room从基类转换为当前类型
+		auto* room2 = roomP-&gt;ToRoom&lt;SecondRoom&gt;();
+		//确定消息为esc的字符消息
+		if (mode == KM_CHAR&amp;&amp;key==VK_ESCAPE)
+		{
+			//跳转到场景1，基类中的GoToRoom函数是不能使用的，
+			//他是给场景管理器调用用于初始化的，
+			//切换场景使用场景管理器的GoToRoom
+			room2-&gt;GetRoomManage()-&gt;GotoRoom(1);
+		}
+	}
+public:
+	//初始化
+	SecondRoom(MainWind_D2D* window)
+	{
+		//设置按键回调
+		SetRoomKeyCallback(KeyCallback);
+		//加载背景图片，（此图片由ai生成做演示）
+		m_Background.m_Data.LoadPictureFromFile(L&quot;背景2.png&quot;, window);
+		//设置显示大小
+		m_Background.SetShowWideForUI(1, 1);
+		//添加到场景
+		AddObject(m_Background);
+	}
+};
+
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="onekeyd2dhpp"><a class="header" href="#onekeyd2dhpp">OneKeyD2D.hpp</a></h1>
 <p>这个文件是为了简化头文件引用设计的<br />
 他会按照正确的顺序引用头文件，避免不必要的错误<br />
@@ -1377,7 +1701,7 @@ ButtonUI m_Button;
 <p><a href="OneKeyD2D%E6%96%87%E4%BB%B6/../Start.html">返回起始页</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="mainwindhpp"><a class="header" href="#mainwindhpp">MainWind.hpp</a></h1>
 <p>基础库，封装了窗口的创建以及基础绘制</p>
-<h2 id="内容-5"><a class="header" href="#内容-5">内容</a></h2>
+<h2 id="内容-6"><a class="header" href="#内容-6">内容</a></h2>
 <ul>
 <li><a href="MainWind%E6%96%87%E4%BB%B6/./d2dClickDetectionClass.html">d2dClickDetection</a><br />
 窗口的点击检测器，用于制作按钮</li>
